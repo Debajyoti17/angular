@@ -1,0 +1,18 @@
+<table>
+  <tr><th>Sno</th>
+    <th *ngFor="let col of columns">
+      {{col}}
+    </th>
+  </tr>
+  <tr *ngFor="let val of data | async; let i=index">
+    <td>{{i+1}}</td>
+    <td *ngFor="let col of columns">
+      {{val[col]}}
+    </td>
+  </tr>
+</table>
+
+    <div></div>
+  <div> My Notes </div>
+  <div></div>
+  <pre>{{notes | json}}</pre>
