@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {HttpClient} from '@angular/common/http';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/delay';
 
 @Injectable()
 export class EmpService {
-  private noteUrl = 'http://localhost:8089/api/notes';
+  private noteUrl = 'http://localhost:8088/api/notes';
   private empUrl = 'http://localhost:8088/api/emps';
   DATA: any[] =
     [
