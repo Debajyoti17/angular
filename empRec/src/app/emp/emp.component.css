@@ -13,3 +13,8 @@
   .mat-sort-header-container {
     align-items: center;
   }
+
+  .example-filter {
+    align-items: flex-start;
+    display: initial;
+  }
