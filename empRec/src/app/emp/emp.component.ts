@@ -1,63 +1,54 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {Observable} from 'rxjs/observable';
-import {EmpService} from './../service/emp.service'
-import {DataSource} from '@angular/cdk/collections';
-import {Sort, MatSort} from '@angular/material';
-import {MatPaginator, MatTableDataSource} from '@angular/material';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Observable } from 'rxjs/observable';
+import { EmpService } from './../service/emp.service'
+import { DataSource } from '@angular/cdk/collections';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'app-emp',
   templateUrl: './emp.component.html',
   styleUrls: ['./emp.component.css']
 })
-export class EmpComponent implements OnInit {
-  public index: number=0;
-  public employee;
-  public note;
-  dataSource = new EmployeeDataSource(this._empService);
+export class EmpComponent implements AfterViewInit {
+  employee;
+  dataSource = new MatTableDataSource(this.employee);
+
   displayedColumns = ['empId', 'name', 'address', 'salary', 'dept', 'age', 'createdAt', 'updatedAt'];
-  sortedData: Sort;
-  matDataSource = new MatTableDataSource<any>();
+  sortedData: MatSort;
   constructor(private _empService: EmpService) {
-    // this.sortedData = this.employee.slice();
-    console.log("emp dat--------: "+JSON.stringify(this.employeeData()));
-   }
-  
-   @ViewChild(MatPaginator) paginator: MatPaginator;
-   @ViewChild(MatSort) matSort: MatSort;
+
+    this._empService.getEmployees().subscribe(result => {
+      if (!result)
+        return;
+      this.employee = result;
+      this.dataSource.data = this.employee;
+    });
+
+  }
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) matSort: MatSort;
 
   /**
    * Set the paginator after the view init since this component will
    * be able to query its view for the initialized paginator.
    */
   ngAfterViewInit() {
-    // this.matDataSource.sortData = this.matDataSource;
-    this.matDataSource.paginator = this.paginator;
-  }
-
-  ngOnInit() {
-  }
-
-  employeeData() {
-    this._empService.getEmployees().subscribe(
-      data =>{this.employee = data;},
-      err=> {console.error(err);},
-      () => {console.log("Data has loaded properly");}
-    );
+    this.dataSource.sort = this.matSort;
+    this.dataSource.paginator = this.paginator;
+    console.log("ngAfter----after------------:");
   }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.matDataSource.filter = filterValue;
+    this.dataSource.filter = filterValue;
   }
 
-  sortData(sort: Sort) {
+  sortData(sort: MatSort) {
     const data = this.employee.slice();
-    console.log("In SortDat ------ this.employee ---:"+this.employee+"---"+JSON.stringify(this.employee));
     if (!sort.active || sort.direction == '') {
       this.sortedData = data;
-      console.log("sotData ........... >> "+JSON.stringify(this.sortedData)+"===--------------==="+JSON.stringify(data));
       return;
     }
 
@@ -77,20 +68,4 @@ export class EmpComponent implements OnInit {
 
 function compare(a, b, isAsc) {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
-}
-
-export class EmployeeDataSource extends DataSource<any> {
-  
-  constructor(private _empService: EmpService) {
-    super();
-    this._empService.getEmployees();
-  }
-
-  // Connect function called by the table to retrieve one stream containing the data to render. 
-  connect(): Observable<any[]> {
-       
-    return this._empService.getEmployees();
-  }
-
-  disconnect() {}
 }
