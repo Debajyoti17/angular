@@ -1,9 +1,14 @@
 <div class="example-container mat-elevation-z8">
   <div class="example-header">
     <mat-form-field>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
+
+    <!-- <mat-form-field class="mat-form-field-class"floatLabel="auto" color="primary" ng-reflect-float-label="never">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      </mat-form-field> -->
   </div>
+  
   <mat-table #table [dataSource]="dataSource" matSort>
     <!-- (matSortChange)="sortData($event)" -->
     <!--- Note that these columns can be defined in any order.
